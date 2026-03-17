@@ -19,6 +19,15 @@ service ssh start
 service ssh status
 ```
 
+#### Setup environment variables
+Add to `~/.bashrc`
+```bash
+export TMPDIR=your_storage/tmp
+export PIP_CACHE_DIR=your_storage/pip-cache
+export HF_HOME=your_storage/hf-cache
+export TRANSFORMERS_CACHE=your_storage/hf-cache
+```
+
 #### ssh-keygen
 ```bash
 source ~/.bashrc
