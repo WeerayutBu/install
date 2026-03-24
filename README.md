@@ -15,6 +15,13 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # 2. Install dependencies
 uv sync
+
+# commands
+# uv init          # create a new project
+# uv add <package> # add a dependency
+# uv sync          # install/update the environment from the project
+# uv run <command> # run something inside the project env
+# uvx <tool>       # run a one-off tool like ruff, black, pytest
 ```
 
 #### Setup ssh
