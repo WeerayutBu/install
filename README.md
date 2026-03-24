@@ -22,6 +22,11 @@ uv sync
 # uv sync          # install/update the environment from the project
 # uv run <command> # run something inside the project env
 # uvx <tool>       # run a one-off tool like ruff, black, pytest
+
+Migrate
+# old_env: python -m pip freeze > requirements.txt
+# new_env: uv venv
+# new_env: uv pip sync requirements.txt
 ```
 
 #### Setup ssh
