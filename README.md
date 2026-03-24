@@ -8,6 +8,15 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 ```
+or
+```
+# 1. Install uv project manager (if you don't already have it)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 2. Install dependencies
+uv sync
+```
+
 #### Setup ssh
 ```bash
 pip install openssh-wrapper
