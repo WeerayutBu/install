@@ -1,53 +1,47 @@
-# Common-commands
+# Common Commands
 
-#### Quick
+## Quick Install
 ```bash
 curl -fsSL https://raw.githubusercontent.com/WeerayutBu/install/main/install.sh | sh
 ```
 
+Sets up: Python (uv), PyTorch, Anthropic SDK, Claude Code config.
 
-#### Python environments
+---
+
+## Python Environment
+
+#### uv (recommended)
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+uv sync                   # install/update from pyproject.toml
+uv add <package>          # add a dependency
+uv run <command>          # run inside the project env
+uvx <tool>                # run a one-off tool (ruff, black, pytest)
+```
+
+#### venv
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-
 pip install -r requirements.txt
-
-```
-or
-```
-# 1. Install uv project manager (if you don't already have it)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# 2. Install dependencies
-uv sync
-
-# commands
-# uv init          # create a new project
-# uv add <package> # add a dependency
-# uv sync          # install/update the environment from the project
-# uv run <command> # run something inside the project env
-# uvx <tool>       # run a one-off tool like ruff, black, pytest
-
-Migrate
-# old_env: python -m pip freeze > requirements.txt
-# new_env: uv venv
-# new_env: uv pip sync requirements.txt
 ```
 
-#### Setup ssh
+#### Migrate venv → uv
 ```bash
-pip install openssh-wrapper
-or apt install  openssh-server
-or sudo yum –y install openssh-server openssh-clients
+# old env
+python -m pip freeze > requirements.txt
 
-# Systemctl enable ssh
-service ssh start
-service ssh status
+# new env
+uv venv
+uv pip sync requirements.txt
 ```
 
-#### Setup environment variables
-Add to `~/.bashrc`
+---
+
+## Environment Variables
+Add to `~/.bashrc`:
 ```bash
 export TMPDIR=your_storage/tmp
 export PIP_CACHE_DIR=your_storage/pip-cache
@@ -55,41 +49,55 @@ export HF_HOME=your_storage/hf-cache
 export TRANSFORMERS_CACHE=your_storage/hf-cache
 ```
 
-#### ssh-keygen
+---
+
+## SSH
+
+#### Install & start
 ```bash
-source ~/.bashrc
-sudo vim /etc/ssh/sshd_config
+# Ubuntu/Debian
+apt install openssh-server
 
-# Use this setup
-# PubkeyAuthentication yes
-# PermitRootLogin yes
+# CentOS/Amazon Linux
+sudo yum -y install openssh-server openssh-clients
 
+service ssh start
+service ssh status
+```
+
+#### Configure (`/etc/ssh/sshd_config`)
+```
+PubkeyAuthentication yes
+PermitRootLogin yes
+```
+```bash
 service ssh restart
 ```
 
-#### Setup public key
+#### Copy public key
 ```bash
-# id_rsa.pub -> .ssh/authorized_keys
-cat ~/.ssh/id_rsa.pub | ssh username@xx.xx.xx.xx 'cat >> .ssh/authorized_keys'
+cat ~/.ssh/id_rsa.pub | ssh user@host 'cat >> ~/.ssh/authorized_keys'
 ```
-#### AWS
+
+---
+
+## AWS EC2
+
+#### Connect
 ```bash
-# ssh using **ec2-user
 ssh -i "aws.pem" ec2-user@xxx.compute-1.amazonaws.com
+```
 
-sudo yum install -y python3
-python3 --version
-python3 -c "import sys; print(sys.executable)"
-
-# environment moduls
+#### Python setup
+```bash
 sudo dnf install -y python3 python3-pip python3-virtualenv
-python3 -m venv --help
-python3 -m venv /tmp/testenv
+python3 -m venv /tmp/env
 python3 -m pip install --upgrade pip setuptools wheel
 ```
-startup
+
+#### Startup (`~/.bashrc`)
 ```bash
 echo 'alias python=python3' >> ~/.bashrc
-echo 'source /tmp/testenv/bin/activate' >> ~/.bashrc
+echo 'source /tmp/env/bin/activate' >> ~/.bashrc
 source ~/.bashrc
 ```
