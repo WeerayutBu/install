@@ -2,7 +2,7 @@
 
 ## Quick Install
 ```bash
-curl -fsSL https://raw.githubusercontent.com/WeerayutBu/install/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/WeerayutBu/install/main/install.sh | bash
 ```
 
 Sets up: Python (uv), PyTorch, Anthropic SDK, Claude Code config.
