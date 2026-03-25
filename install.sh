@@ -1,23 +1,24 @@
 #!/bin/bash
 set -e
 
-PYTHON_VERSION="3.11"
-CUDA_VERSION="cu121"  # Change to cu118, cu124, etc. as needed
+CUDA_VERSION="cu121"  # cu118, cu124, etc.
 
-echo "==> Installing uv..."
-curl -LsSf https://astral.sh/uv/install.sh | sh
-export PATH="$HOME/.cargo/bin:$PATH"
+command -v uv &>/dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
 
-echo "==> Creating virtual environment..."
-uv venv .venv --python ${PYTHON_VERSION}
-source .venv/bin/activate
+[ ! -f pyproject.toml ] && cat > pyproject.toml <<EOF
+[project]
+name = "project"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["torch", "transformers", "datasets", "accelerate", "tqdm", "anthropic"]
 
-echo "==> Installing PyTorch (CUDA ${CUDA_VERSION})..."
-uv pip install torch --index-url https://download.pytorch.org/whl/${CUDA_VERSION}
+[tool.uv.sources]
+torch = [{ index = "pytorch-cuda" }]
 
-echo "==> Installing core packages..."
-uv pip install transformers datasets accelerate tqdm
+[[tool.uv.index]]
+name = "pytorch-cuda"
+url = "https://download.pytorch.org/whl/${CUDA_VERSION}"
+explicit = true
+EOF
 
-echo ""
-echo "Done! Activate with: source .venv/bin/activate"
-echo "Verify GPU: python -c \"import torch; print(torch.cuda.is_available())\""
+uv sync

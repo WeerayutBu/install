@@ -1,5 +1,11 @@
 # Common-commands
 
+#### Quick
+```bash
+curl -fsSL https://raw.githubusercontent.com/WeerayutBu/install/main/install.sh | sh
+```
+
+
 #### Python environments
 ```bash
 python -m venv .venv
