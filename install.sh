@@ -31,9 +31,18 @@ explicit = true
 EOF
 fi
 
-uv sync
+uv sync --python 3.11
+
+# ── Node.js ───────────────────────────────────────────────────────────────────
+if ! command -v node &>/dev/null; then
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  nvm install --lts
+fi
 
 # ── Claude Code ───────────────────────────────────────────────────────────────
+command -v claude &>/dev/null || npm install -g @anthropic-ai/claude-code
 mkdir -p .claude/agents .claude/skills
 
 if [ ! -f .claude/settings.json ]; then
