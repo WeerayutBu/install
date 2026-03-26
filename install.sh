@@ -20,7 +20,6 @@ dependencies = [
     "datasets",
     "accelerate",
     "tqdm",
-    "anthropic",
     "python-dotenv",
 ]
 EOF
@@ -37,7 +36,6 @@ dependencies = [
     "datasets",
     "accelerate",
     "tqdm",
-    "anthropic",
     "python-dotenv",
 ]
 
@@ -50,6 +48,16 @@ url = "https://download.pytorch.org/whl/${CUDA_VERSION}"
 explicit = true
 EOF
   fi
+elif [[ "$(uname)" == "Darwin" ]] && grep -q "pytorch-cuda" pyproject.toml; then
+  # pyproject.toml exists but has a CUDA torch source — strip it for macOS
+  python3 - <<'PYEOF'
+import re, pathlib
+p = pathlib.Path("pyproject.toml")
+txt = p.read_text()
+txt = re.sub(r'\[tool\.uv\.sources\]\ntorch\s*=\s*\[.*?\]\n+', '', txt, flags=re.DOTALL)
+txt = re.sub(r'\[\[tool\.uv\.index\]\]\nname\s*=\s*"pytorch-cuda".*?(?=\[\[|\Z)', '', txt, flags=re.DOTALL)
+p.write_text(txt.strip() + '\n')
+PYEOF
 fi
 
 uv sync --python 3.11
