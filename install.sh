@@ -6,6 +6,57 @@ CUDA_VERSION="cu121"  # options: cu118, cu124, cpu
 # ── Python / uv ───────────────────────────────────────────────────────────────
 command -v uv &>/dev/null || { curl -LsSf https://astral.sh/uv/install.sh | sh; export PATH="$HOME/.local/bin:$PATH"; }
 
+# ── Node.js ───────────────────────────────────────────────────────────────────
+export NVM_DIR="$HOME/.nvm"
+if ! command -v node &>/dev/null; then
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  nvm install --lts
+  nvm use --lts
+else
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+fi
+
+# ── Claude Code ───────────────────────────────────────────────────────────────
+command -v claude &>/dev/null || npm install -g @anthropic-ai/claude-code
+mkdir -p .claude/agents .claude/skills
+
+if [ ! -f .claude/settings.json ]; then
+  cat > .claude/settings.json <<EOF
+{
+  "permissions": {
+    "allow": [],
+    "deny": []
+  }
+}
+EOF
+fi
+
+if [ ! -f .env ]; then
+  cat > .env <<EOF
+# Environment variables
+# ANTHROPIC_API_KEY=your_api_key_here
+EOF
+fi
+
+if [ ! -f CLAUDE.md ]; then
+  cat > CLAUDE.md <<EOF
+# Project
+
+## Setup
+\`\`\`bash
+uv sync
+source .venv/bin/activate
+\`\`\`
+
+## Verify GPU
+\`\`\`bash
+python -c "import torch; print(torch.cuda.is_available())"
+\`\`\`
+EOF
+fi
+
+# ── Python packages ───────────────────────────────────────────────────────────
 if [ ! -f pyproject.toml ]; then
   if [[ "$(uname)" == "Darwin" ]]; then
     # macOS: torch is available on PyPI with native arm64/x86_64 wheels
@@ -61,53 +112,3 @@ PYEOF
 fi
 
 uv sync --python 3.11
-
-# ── Node.js ───────────────────────────────────────────────────────────────────
-export NVM_DIR="$HOME/.nvm"
-if ! command -v node &>/dev/null; then
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-  nvm install --lts
-  nvm use --lts
-else
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-fi
-
-# ── Claude Code ───────────────────────────────────────────────────────────────
-command -v claude &>/dev/null || npm install -g @anthropic-ai/claude-code
-mkdir -p .claude/agents .claude/skills
-
-if [ ! -f .claude/settings.json ]; then
-  cat > .claude/settings.json <<EOF
-{
-  "permissions": {
-    "allow": [],
-    "deny": []
-  }
-}
-EOF
-fi
-
-if [ ! -f .env ]; then
-  cat > .env <<EOF
-# Environment variables
-# ANTHROPIC_API_KEY=your_api_key_here
-EOF
-fi
-
-if [ ! -f CLAUDE.md ]; then
-  cat > CLAUDE.md <<EOF
-# Project
-
-## Setup
-\`\`\`bash
-uv sync
-source .venv/bin/activate
-\`\`\`
-
-## Verify GPU
-\`\`\`bash
-python -c "import torch; print(torch.cuda.is_available())"
-\`\`\`
-EOF
-fi
