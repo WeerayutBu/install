@@ -19,6 +19,7 @@ dependencies = [
     "accelerate",
     "tqdm",
     "anthropic",
+    "python-dotenv",
 ]
 
 [tool.uv.sources]
@@ -56,6 +57,13 @@ if [ ! -f .claude/settings.json ]; then
     "deny": []
   }
 }
+EOF
+fi
+
+if [ ! -f .env ]; then
+  cat > .env <<EOF
+# Environment variables
+# ANTHROPIC_API_KEY=your_api_key_here
 EOF
 fi
 
